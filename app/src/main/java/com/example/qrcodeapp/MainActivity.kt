@@ -38,6 +38,12 @@ class MainActivity : AppCompatActivity() {
     // Link lido no último QR escaneado (usado pelo botão "Abrir cardápio")
     private var linkLido: String? = null
 
+    // Ultimo QR gerado, usado para compartilhar a imagem
+    private var qrGeradoBitmap: Bitmap? = null
+
+    // Numero da mesa do ultimo QR gerado
+    private var qrGeradoMesa: String? = null
+
     // Arquivo temporário onde a câmera vai gravar a foto tirada
     private var fotoTemp: File? = null
 
@@ -77,6 +83,8 @@ class MainActivity : AppCompatActivity() {
         binding.edtLink.setText(prefs.getString(PREF_LINK, ""))
 
         binding.btnGerar.setOnClickListener { gerarQrCode() }
+        binding.btnCompartilharQr.setOnClickListener { compartilharQrGerado() }
+        binding.btnLimpar.setOnClickListener { limparTela() }
         binding.btnTirarFoto.setOnClickListener { verificarPermissaoEAbrirCamera() }
         binding.btnAbrirCardapio.setOnClickListener { abrirNoNavegador(linkLido) }
     }
@@ -95,6 +103,10 @@ class MainActivity : AppCompatActivity() {
             binding.edtLink.error = getString(R.string.erro_link_vazio)
             return
         }
+        if (!linkValido(linkBase)) {
+            binding.edtLink.error = getString(R.string.erro_link_invalido)
+            return
+        }
         if (mesa.isEmpty()) {
             binding.edtTexto.error = getString(R.string.erro_mesa_vazia)
             return
@@ -110,6 +122,9 @@ class MainActivity : AppCompatActivity() {
         binding.progressGerar.visibility = View.VISIBLE
         binding.imgQrGerado.visibility = View.GONE
         binding.txtMesaGerada.visibility = View.GONE
+        binding.txtPlaceholderQr.visibility = View.VISIBLE
+        binding.txtStatusGeracao.visibility = View.GONE
+        binding.btnCompartilharQr.visibility = View.GONE
         binding.btnGerar.isEnabled = false
 
         lifecycleScope.launch {
@@ -128,11 +143,22 @@ class MainActivity : AppCompatActivity() {
 
                 // De volta à Main Thread automaticamente após o withContext
                 if (bitmap != null) {
+                    qrGeradoBitmap = bitmap
+                    qrGeradoMesa = mesa
                     binding.imgQrGerado.setImageBitmap(bitmap)
                     binding.imgQrGerado.visibility = View.VISIBLE
-                    binding.txtMesaGerada.text =
-                        getString(R.string.prefixo_mesa) + " " + mesa
+                    binding.txtPlaceholderQr.visibility = View.GONE
+                    binding.txtMesaGerada.text = getString(R.string.mesa_formatada, mesa)
                     binding.txtMesaGerada.visibility = View.VISIBLE
+                    binding.txtStatusGeracao.text = getString(
+                        R.string.sucesso_qr_gerado,
+                        getString(R.string.mesa_formatada, mesa)
+                    )
+                    binding.txtStatusGeracao.setTextColor(
+                        ContextCompat.getColor(this@MainActivity, R.color.text_primary)
+                    )
+                    binding.txtStatusGeracao.visibility = View.VISIBLE
+                    binding.btnCompartilharQr.visibility = View.VISIBLE
                 } else {
                     Toast.makeText(this@MainActivity, R.string.erro_generico, Toast.LENGTH_SHORT).show()
                 }
@@ -147,18 +173,90 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun linkValido(link: String): Boolean {
+        val uri = Uri.parse(normalizarLink(link))
+        val host = uri.host.orEmpty()
+        return (uri.scheme == "http" || uri.scheme == "https") && host.contains(".")
+    }
+
+    private fun normalizarLink(link: String): String {
+        return if (link.startsWith("http://") || link.startsWith("https://")) {
+            link
+        } else {
+            "https://$link"
+        }
+    }
+
     /**
      * Junta o link do restaurante com o número da mesa, normalizando o endereço:
      *   "meurestaurante.com/cardapio" + "12"  ->  "https://meurestaurante.com/cardapio?mesa=12"
      */
     private fun montarUrlMesa(linkBase: String, mesa: String): String {
-        var base = linkBase
-        if (!base.startsWith("http://") && !base.startsWith("https://")) {
-            base = "https://$base"
-        }
+        var base = normalizarLink(linkBase)
         base = base.trimEnd('/')
         val separador = if (base.contains("?")) "&" else "?"
         return "$base${separador}mesa=$mesa"
+    }
+
+    private fun compartilharQrGerado() {
+        val bitmap = qrGeradoBitmap
+        val mesa = qrGeradoMesa
+        if (bitmap == null || mesa == null) {
+            Toast.makeText(this, R.string.erro_sem_qr_para_compartilhar, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val arquivo = File(cacheDir, "qr_mesa_$mesa.png")
+            val saida = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, saida)
+            arquivo.writeBytes(saida.toByteArray())
+
+            val uriImagem = FileProvider.getUriForFile(
+                this,
+                "${packageName}.fileprovider",
+                arquivo
+            )
+
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "image/png"
+                putExtra(Intent.EXTRA_STREAM, uriImagem)
+                putExtra(Intent.EXTRA_TEXT, getString(R.string.mesa_formatada, mesa))
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            startActivity(Intent.createChooser(intent, getString(R.string.compartilhar_qr_titulo)))
+        } catch (e: Exception) {
+            Log.e("QRCodeApp", "Erro ao compartilhar QR Code", e)
+            Toast.makeText(this, R.string.erro_generico, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun limparTela() {
+        qrGeradoBitmap = null
+        qrGeradoMesa = null
+        linkLido = null
+        fotoTemp = null
+
+        binding.edtTexto.text?.clear()
+        binding.edtLink.error = null
+        binding.edtTexto.error = null
+
+        binding.imgQrGerado.setImageDrawable(null)
+        binding.imgQrGerado.visibility = View.GONE
+        binding.txtMesaGerada.visibility = View.GONE
+        binding.txtStatusGeracao.visibility = View.GONE
+        binding.btnCompartilharQr.visibility = View.GONE
+        binding.txtPlaceholderQr.visibility = View.VISIBLE
+
+        binding.imgFotoCapturada.setImageDrawable(null)
+        binding.imgFotoCapturada.visibility = View.GONE
+        binding.layoutPlaceholderFoto.visibility = View.VISIBLE
+        binding.txtResultadoLeitura.text = getString(R.string.resultado_leitura_padrao)
+        binding.txtResultadoLeitura.setTextColor(
+            ContextCompat.getColor(this, R.color.text_secondary)
+        )
+        binding.btnAbrirCardapio.visibility = View.GONE
     }
 
     /** Abre um link (o cardápio lido de um QR) no navegador do aparelho. */
@@ -212,11 +310,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun processarFotoCapturada(arquivo: File) {
-        // Mostra a foto tirada na tela
-        val bitmapFoto = BitmapFactory.decodeFile(arquivo.absolutePath)
-        binding.imgFotoCapturada.setImageBitmap(bitmapFoto)
-        binding.imgFotoCapturada.visibility = View.VISIBLE
-
         binding.progressLer.visibility = View.VISIBLE
         binding.txtResultadoLeitura.text = getString(R.string.processando)
         binding.btnAbrirCardapio.visibility = View.GONE
@@ -224,6 +317,16 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
+                // Decodifica o bitmap em background para não travar a UI se a foto for grande
+                val bitmapFoto = withContext(Dispatchers.IO) {
+                    BitmapFactory.decodeFile(arquivo.absolutePath)
+                }
+                
+                // Mostra a foto na tela (Main thread)
+                binding.imgFotoCapturada.setImageBitmap(bitmapFoto)
+                binding.imgFotoCapturada.visibility = View.VISIBLE
+                binding.layoutPlaceholderFoto.visibility = View.GONE
+
                 val textoDecodificado: String? = withContext(Dispatchers.IO) {
                     // Comprime a imagem antes de enviar, economizando dados
                     val imagemComprimida = comprimirBitmap(bitmapFoto)
