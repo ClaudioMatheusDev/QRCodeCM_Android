@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Cardápio Online</string>
+    <string name="app_tagline">QR Code das mesas do seu restaurante</string>
+
+    <!-- ===== Gerar QR da mesa ===== -->
+    <string name="titulo_gerar">QR Code da mesa</string>
+    <string name="desc_gerar">Gere o código da mesa que leva o cliente direto ao cardápio digital.</string>
+    <string name="hint_link">Link do cardápio</string>
+    <string name="hint_link_helper">Ex.: https://meurestaurante.com/cardapio</string>
+    <string name="hint_mesa">Número da mesa</string>
+    <string name="prefixo_mesa">Mesa</string>
+    <string name="btn_gerar">Gerar QR da mesa</string>
+    <string name="hint_qr_gerado">O QR da mesa aparecerá aqui</string>
+
+    <!-- ===== Ler QR da mesa ===== -->
+    <string name="titulo_ler">Ler QR da mesa</string>
+    <string name="desc_ler">Escaneie o QR de uma mesa para conferir e abrir o cardápio.</string>
+    <string name="btn_tirar_foto">Escanear QR da mesa</string>
+    <string name="resultado_leitura_padrao">O link do cardápio aparecerá aqui</string>
+    <string name="btn_abrir_cardapio">Abrir cardápio</string>
+
+    <!-- ===== Mensagens ===== -->
+    <string name="erro_generico">Ocorreu um erro. Tente novamente.</string>
+    <string name="erro_mesa_vazia">Informe o número da mesa</string>
+    <string name="erro_link_vazio">Informe o link do cardápio</string>
+    <string name="erro_sem_link">Este QR Code não contém um link de cardápio</string>
+    <string name="erro_permissao_camera">É necessário conceder permissão de câmera</string>
+    <string name="erro_abrir_link">Não foi possível abrir o cardápio</string>
+    <string name="processando">Lendo o QR Code…</string>
+</resources>

@@ -1,0 +1,27 @@
+<resources>
+    <!-- ============ Paleta principal (Cardápio Online) ============ -->
+    <!-- Verde restaurante + terracota + creme: elegante e "apetitoso" -->
+    <color name="brand_500">#2D6A4F</color>
+    <color name="brand_600">#1B4332</color>
+    <color name="brand_700">#14352A</color>
+    <color name="violet_600">#40916C</color>
+    <color name="accent">#E76F51</color>
+
+    <!-- ============ Superfícies / neutros ============ -->
+    <color name="bg">#FBF7F0</color>
+    <color name="bg_top">#F4ECDD</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F3EEE3</color>
+    <color name="outline">#E7DECC</color>
+    <color name="white">#FFFFFF</color>
+
+    <!-- ============ Texto ============ -->
+    <color name="text_primary">#2A2420</color>
+    <color name="text_secondary">#6E6459</color>
+    <color name="on_brand_muted">#CFE6DA</color>
+
+    <!-- ============ Compatibilidade (nomes antigos) ============ -->
+    <color name="primary">#1B4332</color>
+    <color name="primary_dark">#14352A</color>
+    <color name="background">#FBF7F0</color>
+</resources>

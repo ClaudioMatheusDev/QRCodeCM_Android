@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Bloco superior esquerdo -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,28 h20 v20 h-20 z" />
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M33,33 h10 v10 h-10 z" />
+
+    <!-- Bloco superior direito -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M60,28 h20 v20 h-20 z" />
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M65,33 h10 v10 h-10 z" />
+
+    <!-- Bloco inferior esquerdo -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,60 h20 v20 h-20 z" />
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M33,65 h10 v10 h-10 z" />
+
+    <!-- Pontos soltos representando dados do QR -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M64,64 h7 v7 h-7 z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M75,64 h7 v7 h-7 z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M64,75 h7 v7 h-7 z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M75,75 h7 v7 h-7 z" />
+</vector>
