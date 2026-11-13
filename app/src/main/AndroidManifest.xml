@@ -28,6 +28,17 @@
             </intent-filter>
         </activity>
 
+        <!-- Histórico de consultas (ListView) e detalhes de um registro -->
+        <activity
+            android:name=".HistoricoActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".DetalheConsultaActivity"
+            android:exported="false"
+            android:parentActivityName=".HistoricoActivity" />
+
         <!-- FileProvider necessário para salvar a foto tirada pela câmera
              e enviá-la depois para a API de leitura de QR Code -->
         <provider

@@ -21,8 +21,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.qrcodeapp.MainViewModel.Leitura
 import com.example.qrcodeapp.MainViewModel.UiState
+import com.example.qrcodeapp.api.MealDbClient
 import com.example.qrcodeapp.databinding.ActivityMainBinding
+import com.example.qrcodeapp.db.ConsultaDao
 import com.example.qrcodeapp.util.CardapioLinks
+import com.example.qrcodeapp.util.Prato
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -82,8 +85,72 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch { viewModel.ui.collect { renderizar(it) } }
                 launch { viewModel.mensagens.collect { mostrarMensagem(it) } }
+                launch {
+                    viewModel.pratosLidos.collect { (qrCode, idPrato) ->
+                        consultarPratoEmThread(qrCode, idPrato)
+                    }
+                }
             }
         }
+
+        binding.btnHistorico.setOnClickListener {
+            startActivity(Intent(this, HistoricoActivity::class.java))
+        }
+        savedInstanceState?.getString(STATE_RESULTADO_PRATO)?.let(::mostrarResultadoPrato)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (binding.txtResultadoPrato.isVisible) {
+            outState.putString(STATE_RESULTADO_PRATO, binding.txtResultadoPrato.text.toString())
+        }
+    }
+
+    // ==================================================================
+    // FUNCIONALIDADE 3: CONSULTA DO PRATO LIDO NO QR (Thread + TheMealDB + SQLite)
+    // O QR do prato contém o ID dele no TheMealDB (ex.: "52772").
+    // ==================================================================
+
+    /**
+     * Consulta o prato numa Thread secundária, para não travar a UI Thread.
+     * A Thread não pode mexer na tela; por isso as atualizações vão para a
+     * UI Thread com runOnUiThread.
+     */
+    private fun consultarPratoEmThread(qrCode: String, idPrato: String) {
+        mostrarMensagem(getString(R.string.consultando_prato, idPrato))
+        val dao = ConsultaDao(applicationContext)
+
+        Thread {
+            // ----- Thread secundária: rede + banco -----
+            var mensagem: String
+            var resultado: String? = null
+            try {
+                val consulta = MealDbClient.consultar(idPrato, qrCode)
+                dao.inserir(consulta)  // só consultas bem-sucedidas vão para o histórico
+                resultado = getString(R.string.resultado_prato, consulta.nome, consulta.resumo())
+                mensagem = getString(R.string.consulta_salva)
+            } catch (e: MealDbClient.PratoNaoEncontradoException) {
+                mensagem = getString(R.string.erro_prato_nao_encontrado, idPrato)
+            } catch (e: IOException) {
+                Log.e(TAG, "Falha de rede ao consultar prato", e)
+                mensagem = getString(R.string.erro_sem_conexao)
+            } catch (e: Exception) {
+                Log.e(TAG, "Erro ao consultar prato", e)
+                mensagem = getString(R.string.erro_generico)
+            }
+
+            // ----- De volta à UI Thread -----
+            runOnUiThread {
+                if (isFinishing || isDestroyed) return@runOnUiThread
+                resultado?.let(::mostrarResultadoPrato)
+                mostrarMensagem(mensagem)
+            }
+        }.start()
+    }
+
+    private fun mostrarResultadoPrato(texto: String) {
+        binding.txtResultadoPrato.text = texto
+        binding.txtResultadoPrato.isVisible = true
     }
 
     // ==================================================================
@@ -127,7 +194,7 @@ class MainActivity : AppCompatActivity() {
                 txtResultadoLeitura.setTextColor(cor(R.color.text_secondary))
             }
             is Leitura.Sucesso -> {
-                txtResultadoLeitura.text = if (leitura.link != null) {
+                txtResultadoLeitura.text = if (leitura.link != null || Prato.extrairId(leitura.texto) != null) {
                     leitura.texto
                 } else {
                     // Lido com sucesso, mas não é um link: mostra o conteúdo e avisa
@@ -200,6 +267,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun limparTela() {
         viewModel.limpar()
+        binding.txtResultadoPrato.isVisible = false
         binding.edtTexto.text?.clear()
         binding.edtLink.error = null
         binding.edtTexto.error = null
@@ -257,11 +325,16 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, mensagem, Toast.LENGTH_SHORT).show()
     }
 
+    private fun mostrarMensagem(mensagem: String) {
+        Toast.makeText(this, mensagem, Toast.LENGTH_SHORT).show()
+    }
+
     private fun cor(id: Int): Int = ContextCompat.getColor(this, id)
 
     companion object {
         private const val TAG = "QRCodeApp"
         private const val PREFS_NOME = "cardapio_online"
         private const val PREF_LINK = "link_cardapio"
+        private const val STATE_RESULTADO_PRATO = "resultado_prato"
     }
 }

@@ -10,6 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.qrcodeapp.api.RetrofitClient
 import com.example.qrcodeapp.util.CardapioLinks
+import com.example.qrcodeapp.util.Prato
 import com.example.qrcodeapp.util.Imagens
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +66,10 @@ class MainViewModel(
     /** Mensagens curtas (Toast) que devem ser exibidas uma única vez. */
     private val _mensagens = Channel<Int>(Channel.BUFFERED)
     val mensagens: Flow<Int> = _mensagens.receiveAsFlow()
+
+    /** Leitura de QR com código de prato: (texto do QR, ID do prato). Entregue uma vez só. */
+    private val _pratosLidos = Channel<Pair<String, String>>(Channel.BUFFERED)
+    val pratosLidos: Flow<Pair<String, String>> = _pratosLidos.receiveAsFlow()
 
     private var jobGerar: Job? = null
     private var jobLer: Job? = null
@@ -210,7 +215,13 @@ class MainViewModel(
                     _ui.update { it.copy(leitura = Leitura.Falha(R.string.erro_qr_nao_encontrado)) }
                 } else {
                     estado[KEY_LEITURA_TEXTO] = texto
-                    _ui.update { it.copy(leitura = leituraDe(texto)) }
+                    val leitura = leituraDe(texto)
+                    _ui.update { it.copy(leitura = leitura) }
+
+                    // QR com código de prato (e não um link): a Activity consulta o TheMealDB
+                    if (leitura.link == null) {
+                        Prato.extrairId(texto)?.let { id -> _pratosLidos.send(texto to id) }
+                    }
                 }
             } catch (e: CancellationException) {
                 throw e
