@@ -14,6 +14,7 @@
     <color name="text_primary">#F3EEE4</color>
     <color name="text_secondary">#B4A996</color>
     <color name="on_brand_muted">#BFE3CF</color>
+    <color name="text_error">#F2B8B5</color>
 
     <color name="primary">#40916C</color>
     <color name="primary_dark">#2D6A4F</color>

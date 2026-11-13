@@ -34,5 +34,10 @@
     <string name="erro_sem_link">Este QR Code não contém um link de cardápio</string>
     <string name="erro_permissao_camera">É necessário conceder permissão de câmera</string>
     <string name="erro_abrir_link">Não foi possível abrir o cardápio</string>
+    <string name="erro_sem_conexao">Sem conexão com a internet. Verifique a rede e tente novamente.</string>
+    <string name="erro_servidor">O serviço de QR Code não respondeu corretamente. Tente novamente em instantes.</string>
+    <string name="erro_qr_nao_encontrado">Nenhum QR Code encontrado na foto. Tente de novo, com o código centralizado, focado e bem iluminado.</string>
+    <string name="erro_foto_invalida">Não foi possível carregar a foto. Tente novamente.</string>
+    <string name="erro_sem_camera">Nenhum aplicativo de câmera disponível no aparelho</string>
     <string name="processando">Lendo o QR Code…</string>
 </resources>
