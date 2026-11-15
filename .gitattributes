@@ -1,0 +1,6 @@
+# Scripts do Gradle wrapper precisam de finais de linha corretos em cada sistema
+gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary
+*.pdf binary
+*.png binary

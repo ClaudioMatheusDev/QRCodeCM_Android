@@ -25,6 +25,17 @@
     <string name="resultado_leitura_padrao">O link do cardápio aparecerá aqui</string>
     <string name="btn_abrir_cardapio">Abrir cardápio</string>
 
+    <!-- ===== Consulta de prato via QR (TheMealDB) + histórico (SQLite) ===== -->
+    <string name="btn_historico">Pratos consultados</string>
+    <string name="titulo_historico">Pratos consultados</string>
+    <string name="historico_vazio">Nenhum prato consultado ainda.\nEscaneie o QR Code de um prato (ex.: 52772).</string>
+    <string name="consultando_prato">Consultando o prato %s…</string>
+    <string name="consulta_salva">Prato salvo no histórico</string>
+    <string name="resultado_prato">%1$s\n%2$s</string>
+    <string name="erro_prato_nao_encontrado">Prato %s não encontrado no TheMealDB</string>
+    <string name="nao_informado">—</string>
+    <string name="detalhe_formatado">Registro nº %1$d\n\nPrato: %2$s\nCódigo TheMealDB: %3$s\nCategoria: %4$s\nOrigem: %5$s\n\nIngredientes:\n%6$s\n\nModo de preparo:\n%7$s\n\nConsultado em: %8$s\nConteúdo do QR Code: %9$s</string>
+
     <!-- ===== Mensagens ===== -->
     <string name="erro_generico">Ocorreu um erro. Tente novamente.</string>
     <string name="erro_mesa_vazia">Informe o número da mesa</string>
@@ -34,5 +45,10 @@
     <string name="erro_sem_link">Este QR Code não contém um link de cardápio</string>
     <string name="erro_permissao_camera">É necessário conceder permissão de câmera</string>
     <string name="erro_abrir_link">Não foi possível abrir o cardápio</string>
+    <string name="erro_sem_conexao">Sem conexão com a internet. Verifique a rede e tente novamente.</string>
+    <string name="erro_servidor">O serviço de QR Code não respondeu corretamente. Tente novamente em instantes.</string>
+    <string name="erro_qr_nao_encontrado">Nenhum QR Code encontrado na foto. Tente de novo, com o código centralizado, focado e bem iluminado.</string>
+    <string name="erro_foto_invalida">Não foi possível carregar a foto. Tente novamente.</string>
+    <string name="erro_sem_camera">Nenhum aplicativo de câmera disponível no aparelho</string>
     <string name="processando">Lendo o QR Code…</string>
 </resources>

@@ -19,6 +19,7 @@
     <color name="text_primary">#2A2420</color>
     <color name="text_secondary">#6E6459</color>
     <color name="on_brand_muted">#CFE6DA</color>
+    <color name="text_error">#B3261E</color>
 
     <!-- ============ Compatibilidade (nomes antigos) ============ -->
     <color name="primary">#1B4332</color>
