@@ -2,11 +2,14 @@ package com.example.qrcodeapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.example.qrcodeapp.databinding.ActivityHistoricoBinding
+import com.example.qrcodeapp.databinding.ItemHistoricoBinding
 import com.example.qrcodeapp.db.ConsultaDao
 import com.example.qrcodeapp.model.ConsultaPrato
 
@@ -33,8 +36,7 @@ class HistoricoActivity : AppCompatActivity() {
 
         dao = ConsultaDao(applicationContext)
 
-        // ArrayAdapter usa o toString() de ConsultaPrato para o texto de cada linha
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, consultas)
+        adapter = ConsultaAdapter()
         binding.listaHistorico.adapter = adapter
 
         // Evento de clique: abre a tela de detalhes passando o registro num Bundle
@@ -79,6 +81,23 @@ class HistoricoActivity : AppCompatActivity() {
         val intent = Intent(this, DetalheConsultaActivity::class.java)
         intent.putExtras(dados)
         startActivity(intent)
+    }
+
+    /** Desenha cada linha da ListView com o layout item_historico (nome + categoria · data). */
+    private inner class ConsultaAdapter :
+        ArrayAdapter<ConsultaPrato>(this@HistoricoActivity, R.layout.item_historico, consultas) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val item = convertView
+                ?.let(ItemHistoricoBinding::bind)
+                ?: ItemHistoricoBinding.inflate(layoutInflater, parent, false)
+            val consulta = consultas[position]
+            item.txtItemNome.text = consulta.nome
+            item.txtItemInfo.text = listOf(consulta.categoria, consulta.dataHora)
+                .filter { it.isNotBlank() }
+                .joinToString(" · ")
+            return item.root
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

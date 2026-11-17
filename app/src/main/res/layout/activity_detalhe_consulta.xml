@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -7,25 +8,157 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/brand_700"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+        android:layout_height="?attr/actionBarSize" />
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:scrollbars="none">
 
-        <TextView
-            android:id="@+id/txtDetalhes"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:background="@drawable/bg_result"
-            android:lineSpacingExtra="6dp"
-            android:padding="18dp"
-            android:textColor="@color/text_primary"
-            android:textIsSelectable="true"
-            android:textSize="15sp" />
-    </ScrollView>
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp">
 
+            <!-- Cabeçalho: nome + categoria / origem -->
+            <TextView
+                android:id="@+id/txtNome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                tools:text="Teriyaki Chicken Casserole" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtCategoria"
+                    style="@style/Widget.QR.Chip"
+                    tools:text="Chicken" />
+
+                <TextView
+                    android:id="@+id/txtOrigem"
+                    style="@style/Widget.QR.Chip"
+                    android:layout_marginStart="8dp"
+                    tools:text="Japanese" />
+            </LinearLayout>
+
+            <!-- Ingredientes -->
+            <TextView
+                style="@style/Widget.QR.SectionLabel"
+                android:text="@string/detalhe_ingredientes" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txtIngredientes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="6dp"
+                    android:padding="16dp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="@color/text_primary"
+                    android:textIsSelectable="true"
+                    tools:text="•  3/4 cup soy sauce\n•  1/2 cup water" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Modo de preparo -->
+            <TextView
+                style="@style/Widget.QR.SectionLabel"
+                android:text="@string/detalhe_preparo" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txtInstrucoes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="4dp"
+                    android:padding="16dp"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="@color/text_primary"
+                    android:textIsSelectable="true"
+                    tools:text="Preheat oven to 350° F..." />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Dados da consulta -->
+            <TextView
+                style="@style/Widget.QR.SectionLabel"
+                android:text="@string/detalhe_consulta" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="6dp">
+
+                    <LinearLayout style="@style/Widget.QR.InfoRow">
+                        <TextView
+                            style="@style/Widget.QR.InfoLabel"
+                            android:text="@string/detalhe_registro" />
+                        <TextView
+                            android:id="@+id/txtRegistro"
+                            style="@style/Widget.QR.InfoValue"
+                            tools:text="nº 3" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Widget.QR.InfoRow">
+                        <TextView
+                            style="@style/Widget.QR.InfoLabel"
+                            android:text="@string/detalhe_codigo" />
+                        <TextView
+                            android:id="@+id/txtCodigo"
+                            style="@style/Widget.QR.InfoValue"
+                            tools:text="52772" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Widget.QR.InfoRow">
+                        <TextView
+                            style="@style/Widget.QR.InfoLabel"
+                            android:text="@string/detalhe_data" />
+                        <TextView
+                            android:id="@+id/txtData"
+                            style="@style/Widget.QR.InfoValue"
+                            tools:text="17/11/2026 18:42" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/Widget.QR.InfoRow">
+                        <TextView
+                            style="@style/Widget.QR.InfoLabel"
+                            android:text="@string/detalhe_qr" />
+                        <TextView
+                            android:id="@+id/txtQr"
+                            style="@style/Widget.QR.InfoValue"
+                            android:textIsSelectable="true"
+                            tools:text="52772" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

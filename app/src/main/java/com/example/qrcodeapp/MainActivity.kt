@@ -5,12 +5,15 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.ColorRes
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -96,13 +99,16 @@ class MainActivity : AppCompatActivity() {
         binding.btnHistorico.setOnClickListener {
             startActivity(Intent(this, HistoricoActivity::class.java))
         }
-        savedInstanceState?.getString(STATE_RESULTADO_PRATO)?.let(::mostrarResultadoPrato)
+        savedInstanceState?.getString(STATE_PRATO_NOME)?.let { nome ->
+            mostrarResultadoPrato(nome, savedInstanceState.getString(STATE_PRATO_INFO).orEmpty())
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        if (binding.txtResultadoPrato.isVisible) {
-            outState.putString(STATE_RESULTADO_PRATO, binding.txtResultadoPrato.text.toString())
+        if (binding.layoutPrato.isVisible) {
+            outState.putString(STATE_PRATO_NOME, binding.txtPratoNome.text.toString())
+            outState.putString(STATE_PRATO_INFO, binding.txtPratoInfo.text.toString())
         }
     }
 
@@ -123,11 +129,11 @@ class MainActivity : AppCompatActivity() {
         Thread {
             // ----- Thread secundária: rede + banco -----
             var mensagem: String
-            var resultado: String? = null
+            var resultado: Pair<String, String>? = null
             try {
                 val consulta = MealDbClient.consultar(idPrato, qrCode)
                 dao.inserir(consulta)  // só consultas bem-sucedidas vão para o histórico
-                resultado = getString(R.string.resultado_prato, consulta.nome, consulta.resumo())
+                resultado = consulta.nome to consulta.resumo()
                 mensagem = getString(R.string.consulta_salva)
             } catch (e: MealDbClient.PratoNaoEncontradoException) {
                 mensagem = getString(R.string.erro_prato_nao_encontrado, idPrato)
@@ -142,15 +148,17 @@ class MainActivity : AppCompatActivity() {
             // ----- De volta à UI Thread -----
             runOnUiThread {
                 if (isFinishing || isDestroyed) return@runOnUiThread
-                resultado?.let(::mostrarResultadoPrato)
+                resultado?.let { (nome, info) -> mostrarResultadoPrato(nome, info) }
                 mostrarMensagem(mensagem)
             }
         }.start()
     }
 
-    private fun mostrarResultadoPrato(texto: String) {
-        binding.txtResultadoPrato.text = texto
-        binding.txtResultadoPrato.isVisible = true
+    private fun mostrarResultadoPrato(nome: String, info: String) = with(binding) {
+        txtPratoNome.text = nome
+        txtPratoInfo.text = info
+        txtPratoInfo.isVisible = info.isNotBlank()
+        layoutPrato.isVisible = true
     }
 
     // ==================================================================
@@ -170,10 +178,8 @@ class MainActivity : AppCompatActivity() {
         txtStatusGeracao.isVisible = temQr
         btnCompartilharQr.isVisible = temQr
         if (temQr) {
-            val mesaFormatada = getString(R.string.mesa_formatada, mesa)
-            txtMesaGerada.text = mesaFormatada
-            txtStatusGeracao.text = getString(R.string.sucesso_qr_gerado, mesaFormatada)
-            txtStatusGeracao.setTextColor(cor(R.color.text_primary))
+            txtMesaGerada.text = getString(R.string.mesa_formatada, mesa)
+            txtStatusGeracao.text = getString(R.string.sucesso_qr_gerado)
         }
 
         // ----- Ler -----
@@ -185,29 +191,46 @@ class MainActivity : AppCompatActivity() {
         layoutPlaceholderFoto.isVisible = estado.fotoBitmap == null
 
         when (val leitura = estado.leitura) {
-            Leitura.Vazia -> {
-                txtResultadoLeitura.text = getString(R.string.resultado_leitura_padrao)
-                txtResultadoLeitura.setTextColor(cor(R.color.text_secondary))
-            }
-            Leitura.Processando -> {
-                txtResultadoLeitura.text = getString(R.string.processando)
-                txtResultadoLeitura.setTextColor(cor(R.color.text_secondary))
-            }
-            is Leitura.Sucesso -> {
-                txtResultadoLeitura.text = if (leitura.link != null || Prato.extrairId(leitura.texto) != null) {
+            Leitura.Vazia -> statusLeitura(
+                getString(R.string.resultado_leitura_padrao), StatusLeitura.NEUTRO
+            )
+            Leitura.Processando -> statusLeitura(
+                getString(R.string.processando), StatusLeitura.NEUTRO
+            )
+            is Leitura.Sucesso -> statusLeitura(
+                if (leitura.link != null || Prato.extrairId(leitura.texto) != null) {
                     leitura.texto
                 } else {
                     // Lido com sucesso, mas não é um link: mostra o conteúdo e avisa
                     "${leitura.texto}\n\n${getString(R.string.erro_sem_link)}"
-                }
-                txtResultadoLeitura.setTextColor(cor(R.color.text_primary))
-            }
-            is Leitura.Falha -> {
-                txtResultadoLeitura.text = getString(leitura.mensagem)
-                txtResultadoLeitura.setTextColor(cor(R.color.text_error))
-            }
+                },
+                StatusLeitura.SUCESSO
+            )
+            is Leitura.Falha -> statusLeitura(
+                getString(leitura.mensagem), StatusLeitura.ERRO
+            )
         }
         btnAbrirCardapio.isVisible = (estado.leitura as? Leitura.Sucesso)?.link != null
+    }
+
+    private enum class StatusLeitura(
+        @DrawableRes val fundo: Int,
+        @DrawableRes val icone: Int,
+        @ColorRes val corIcone: Int,
+        @ColorRes val corTexto: Int
+    ) {
+        NEUTRO(R.drawable.bg_status_neutro, R.drawable.ic_info, R.color.text_secondary, R.color.text_secondary),
+        SUCESSO(R.drawable.bg_status_sucesso, R.drawable.ic_check_circle, R.color.brand, R.color.text_primary),
+        ERRO(R.drawable.bg_status_erro, R.drawable.ic_error, R.color.error, R.color.error)
+    }
+
+    /** Mostra a mensagem da leitura com fundo, ícone e cor do estado. */
+    private fun statusLeitura(texto: String, status: StatusLeitura) = with(binding) {
+        layoutResultadoLeitura.setBackgroundResource(status.fundo)
+        imgStatusLeitura.setImageResource(status.icone)
+        imgStatusLeitura.imageTintList = ColorStateList.valueOf(cor(status.corIcone))
+        txtResultadoLeitura.text = texto
+        txtResultadoLeitura.setTextColor(cor(status.corTexto))
     }
 
     // ==================================================================
@@ -267,7 +290,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun limparTela() {
         viewModel.limpar()
-        binding.txtResultadoPrato.isVisible = false
+        binding.layoutPrato.isVisible = false
         binding.edtTexto.text?.clear()
         binding.edtLink.error = null
         binding.edtTexto.error = null
@@ -335,6 +358,7 @@ class MainActivity : AppCompatActivity() {
         private const val TAG = "QRCodeApp"
         private const val PREFS_NOME = "cardapio_online"
         private const val PREF_LINK = "link_cardapio"
-        private const val STATE_RESULTADO_PRATO = "resultado_prato"
+        private const val STATE_PRATO_NOME = "prato_nome"
+        private const val STATE_PRATO_INFO = "prato_info"
     }
 }

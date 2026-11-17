@@ -12,6 +12,7 @@ import com.example.qrcodeapp.api.RetrofitClient
 import com.example.qrcodeapp.util.CardapioLinks
 import com.example.qrcodeapp.util.Prato
 import com.example.qrcodeapp.util.Imagens
+import com.example.qrcodeapp.util.LeitorQrLocal
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -191,25 +192,9 @@ class MainViewModel(
                 estado[KEY_FOTO_PREVIEW] = upload.absolutePath
                 _ui.update { it.copy(fotoBitmap = preview) }
 
-                val resposta = withContext(Dispatchers.IO) {
-                    val corpo = upload.asRequestBody("image/jpeg".toMediaType())
-                    val parte = MultipartBody.Part.createFormData("file", "qrcode.jpg", corpo)
-                    val response = RetrofitClient.api.lerQrCode(imagem = parte)
-                    if (!response.isSuccessful) {
-                        response.errorBody()?.close()
-                        throw RespostaInvalidaException()
-                    }
-                    response.body()
-                }
-
-                // A API retorna uma lista; pegamos o primeiro símbolo decodificado
-                val texto = resposta
-                    ?.firstOrNull()
-                    ?.symbol
-                    ?.firstOrNull()
-                    ?.takeIf { it.error == null }
-                    ?.data
-                    ?.takeIf { it.isNotBlank() }
+                // 1º tenta a API; se ela falhar ou não achar o QR, decodifica no aparelho
+                val texto = lerPelaApi(upload)
+                    ?: withContext(Dispatchers.Default) { LeitorQrLocal.decodificar(preview) }
 
                 if (texto == null) {
                     _ui.update { it.copy(leitura = Leitura.Falha(R.string.erro_qr_nao_encontrado)) }
@@ -229,16 +214,44 @@ class MainViewModel(
                 falhaLeitura(R.string.erro_foto_invalida, e)
             } catch (e: OutOfMemoryError) {
                 falhaLeitura(R.string.erro_foto_invalida, e)
-            } catch (e: RespostaInvalidaException) {
-                falhaLeitura(R.string.erro_servidor, e)
-            } catch (e: IOException) {
-                falhaLeitura(R.string.erro_sem_conexao, e)
             } catch (e: Exception) {
                 falhaLeitura(R.string.erro_generico, e)
             } finally {
                 _ui.update { it.copy(lendo = false) }
                 foto.delete()
             }
+        }
+    }
+
+    /**
+     * Envia a foto para a API de leitura. Retorna o texto do QR, ou null se a API
+     * falhar (HTTP de erro, rede) ou não encontrar um QR — nesses casos o chamador
+     * usa o [LeitorQrLocal] como reserva.
+     */
+    private suspend fun lerPelaApi(upload: File): String? = withContext(Dispatchers.IO) {
+        try {
+            val corpo = upload.asRequestBody("image/jpeg".toMediaType())
+            val parte = MultipartBody.Part.createFormData("file", "qrcode.jpg", corpo)
+            val response = RetrofitClient.api.lerQrCode(imagem = parte)
+            if (!response.isSuccessful) {
+                Log.w(TAG, "API de leitura respondeu HTTP ${response.code()}; usando leitor local")
+                response.errorBody()?.close()
+                return@withContext null
+            }
+            // A API retorna uma lista; pegamos o primeiro símbolo decodificado
+            response.body()
+                ?.firstOrNull()
+                ?.symbol
+                ?.firstOrNull()
+                ?.takeIf { it.error == null }
+                ?.data
+                ?.takeIf { it.isNotBlank() }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // IOException (sem rede/timeout) ou JSON inesperado
+            Log.w(TAG, "Falha na API de leitura; usando leitor local", e)
+            null
         }
     }
 

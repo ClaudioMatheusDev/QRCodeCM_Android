@@ -1,61 +1,151 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.QRCodeApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/brand_600</item>
-        <item name="colorPrimaryVariant">@color/brand_700</item>
-        <item name="colorSecondary">@color/accent</item>
-        <item name="colorSecondaryVariant">@color/accent</item>
-        <item name="colorOnPrimary">@color/white</item>
+    <!-- Material 3: visual limpo, neutro, com uma única cor de destaque -->
+    <style name="Theme.QRCodeApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/brand</item>
+        <item name="colorOnPrimary">@color/on_brand</item>
+        <item name="colorPrimaryContainer">@color/brand_container</item>
+        <item name="colorOnPrimaryContainer">@color/on_brand_container</item>
+        <item name="colorSecondary">@color/brand</item>
+        <item name="colorOnSecondary">@color/on_brand</item>
+        <item name="colorSecondaryContainer">@color/brand_container</item>
+        <item name="colorOnSecondaryContainer">@color/on_brand_container</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/outline</item>
+        <item name="colorError">@color/error</item>
+        <item name="colorErrorContainer">@color/error_container</item>
         <item name="android:colorBackground">@color/bg</item>
 
-        <item name="android:windowBackground">@drawable/bg_app_gradient</item>
-        <item name="android:statusBarColor">@color/brand_700</item>
+        <item name="android:windowBackground">@color/bg</item>
+        <item name="android:statusBarColor">@color/bg</item>
         <item name="android:navigationBarColor">@color/bg</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightStatusBar">@bool/barras_claras</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">@bool/barras_claras</item>
 
+        <item name="toolbarStyle">@style/Widget.QR.Toolbar</item>
         <item name="materialButtonStyle">@style/Widget.QR.Button</item>
         <item name="textInputStyle">@style/Widget.QR.TextInput</item>
         <item name="materialCardViewStyle">@style/Widget.QR.Card</item>
     </style>
 
-    <!-- Botão de ação principal -->
-    <style name="Widget.QR.Button" parent="Widget.MaterialComponents.Button">
-        <item name="cornerRadius">16dp</item>
-        <item name="android:paddingTop">15dp</item>
-        <item name="android:paddingBottom">15dp</item>
-        <item name="android:textAllCaps">false</item>
+    <style name="Widget.QR.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/bg</item>
+        <item name="titleTextColor">@color/text_primary</item>
+        <item name="subtitleTextColor">@color/text_secondary</item>
+        <item name="titleTextAppearance">@style/TextAppearance.QR.ToolbarTitle</item>
+    </style>
+
+    <style name="TextAppearance.QR.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Botões -->
+    <style name="Widget.QR.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">12dp</item>
+        <item name="android:minHeight">52dp</item>
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:letterSpacing">0.01</item>
-        <item name="backgroundTint">@color/brand_600</item>
-        <item name="rippleColor">#33FFFFFF</item>
         <item name="iconGravity">textStart</item>
-        <item name="iconPadding">10dp</item>
-        <item name="iconTint">@color/white</item>
-        <item name="elevation">0dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="iconSize">20dp</item>
+    </style>
+
+    <style name="Widget.QR.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="cornerRadius">12dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">8dp</item>
+        <item name="iconSize">18dp</item>
+    </style>
+
+    <style name="Widget.QR.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColor">@color/text_secondary</item>
     </style>
 
     <!-- Campo de texto -->
-    <style name="Widget.QR.TextInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="boxCornerRadiusTopStart">14dp</item>
-        <item name="boxCornerRadiusTopEnd">14dp</item>
-        <item name="boxCornerRadiusBottomStart">14dp</item>
-        <item name="boxCornerRadiusBottomEnd">14dp</item>
-        <item name="boxStrokeColor">@color/brand_600</item>
-        <item name="boxStrokeWidth">1dp</item>
-        <item name="hintTextColor">@color/brand_600</item>
-        <item name="android:textColorHint">@color/text_secondary</item>
+    <style name="Widget.QR.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxStrokeColor">@color/brand</item>
+        <item name="startIconTint">@color/text_secondary</item>
     </style>
 
-    <!-- Cartões -->
-    <style name="Widget.QR.Card" parent="Widget.MaterialComponents.CardView">
+    <!-- Cartões: planos, com borda sutil -->
+    <style name="Widget.QR.Card" parent="Widget.Material3.CardView.Outlined">
         <item name="cardBackgroundColor">@color/surface</item>
-        <item name="cardCornerRadius">22dp</item>
+        <item name="cardCornerRadius">16dp</item>
         <item name="cardElevation">0dp</item>
         <item name="strokeColor">@color/outline</item>
         <item name="strokeWidth">1dp</item>
-        <item name="contentPadding">0dp</item>
+    </style>
+
+    <!-- Tela de detalhes -->
+    <style name="Widget.QR.Chip" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_chip</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="Widget.QR.SectionLabel" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.QR.Overline</item>
+    </style>
+
+    <style name="Widget.QR.InfoRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="Widget.QR.InfoLabel" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textAppearance">@style/TextAppearance.QR.Body</item>
+    </style>
+
+    <style name="Widget.QR.InfoValue" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1.3</item>
+        <item name="android:gravity">end</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <!-- Tipografia -->
+    <style name="TextAppearance.QR.Overline" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.08</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.QR.CardTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.QR.Body" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/text_secondary</item>
     </style>
 </resources>

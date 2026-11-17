@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -7,29 +8,62 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/brand_700"
-        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+        android:layout_height="?attr/actionBarSize" />
 
     <ListView
         android:id="@+id/listaHistorico"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:divider="@color/outline"
-        android:dividerHeight="1dp" />
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
+        android:listSelector="@android:color/transparent"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="24dp"
+        android:scrollbarStyle="outsideOverlay" />
 
     <!-- Mostrado quando o banco ainda não tem consultas -->
-    <TextView
+    <LinearLayout
         android:id="@+id/txtVazio"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:padding="24dp"
-        android:text="@string/historico_vazio"
-        android:textColor="@color/text_secondary"
-        android:textSize="15sp"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_icon_chip">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_restaurant"
+                app:tint="@color/brand" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/historico_vazio_titulo"
+            android:textAppearance="@style/TextAppearance.QR.CardTitle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@string/historico_vazio"
+            android:textAppearance="@style/TextAppearance.QR.Body" />
+    </LinearLayout>
 
 </LinearLayout>

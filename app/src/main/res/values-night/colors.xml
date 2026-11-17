@@ -1,22 +1,17 @@
 <resources>
-    <color name="brand_500">#52B788</color>
-    <color name="brand_600">#40916C</color>
-    <color name="brand_700">#2D6A4F</color>
-    <color name="violet_600">#52B788</color>
-    <color name="accent">#F4A261</color>
+    <color name="brand">#4CC38A</color>
+    <color name="on_brand">#052016</color>
+    <color name="brand_container">#12332A</color>
+    <color name="on_brand_container">#A7E8C9</color>
 
-    <color name="bg">#14110D</color>
-    <color name="bg_top">#1E1A14</color>
-    <color name="surface">#1C1813</color>
-    <color name="surface_variant">#26211A</color>
-    <color name="outline">#3A332A</color>
+    <color name="bg">#0E1013</color>
+    <color name="surface">#16191D</color>
+    <color name="surface_variant">#1E2227</color>
+    <color name="outline">#2A2F36</color>
 
-    <color name="text_primary">#F3EEE4</color>
-    <color name="text_secondary">#B4A996</color>
-    <color name="on_brand_muted">#BFE3CF</color>
-    <color name="text_error">#F2B8B5</color>
+    <color name="text_primary">#F3F4F6</color>
+    <color name="text_secondary">#9CA3AF</color>
 
-    <color name="primary">#40916C</color>
-    <color name="primary_dark">#2D6A4F</color>
-    <color name="background">#14110D</color>
+    <color name="error">#F97066</color>
+    <color name="error_container">#3A1714</color>
 </resources>

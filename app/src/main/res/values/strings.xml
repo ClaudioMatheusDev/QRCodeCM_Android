@@ -3,38 +3,50 @@
     <string name="app_tagline">QR Code das mesas do seu restaurante</string>
 
     <!-- ===== Gerar QR da mesa ===== -->
+    <string name="secao_gerar">Gerar</string>
     <string name="titulo_gerar">QR Code da mesa</string>
-    <string name="desc_gerar">Gere o código da mesa que leva o cliente direto ao cardápio digital.</string>
+    <string name="desc_gerar">Crie o código que leva o cliente direto ao cardápio digital.</string>
     <string name="hint_link">Link do cardápio</string>
     <string name="hint_link_helper">Ex.: https://meurestaurante.com/cardapio</string>
     <string name="hint_mesa">Número da mesa</string>
-    <string name="prefixo_mesa">Mesa</string>
     <string name="mesa_formatada">Mesa %s</string>
-    <string name="btn_gerar">Gerar QR da mesa</string>
-    <string name="btn_compartilhar_qr">Compartilhar QR Code</string>
+    <string name="btn_gerar">Gerar QR Code</string>
+    <string name="btn_compartilhar_qr">Compartilhar</string>
     <string name="btn_limpar">Limpar</string>
-    <string name="hint_qr_gerado">O QR da mesa aparecerá aqui</string>
-    <string name="sucesso_qr_gerado">QR Code da %s gerado com sucesso.</string>
+    <string name="hint_qr_gerado">O QR Code da mesa aparecerá aqui</string>
+    <string name="sucesso_qr_gerado">Pronto para imprimir ou compartilhar</string>
     <string name="compartilhar_qr_titulo">Compartilhar QR Code da mesa</string>
 
     <!-- ===== Ler QR da mesa ===== -->
-    <string name="titulo_ler">Ler QR da mesa</string>
-    <string name="desc_ler">Escaneie o QR de uma mesa para conferir e abrir o cardápio.</string>
-    <string name="btn_tirar_foto">Escanear QR da mesa</string>
-    <string name="placeholder_foto">Nenhuma imagem capturada ainda</string>
-    <string name="resultado_leitura_padrao">O link do cardápio aparecerá aqui</string>
+    <string name="secao_ler">Ler</string>
+    <string name="titulo_ler">Ler QR Code</string>
+    <string name="desc_ler">Escaneie o QR de uma mesa ou de um prato.</string>
+    <string name="btn_tirar_foto">Escanear QR Code</string>
+    <string name="placeholder_foto">A foto do QR Code aparecerá aqui</string>
+    <string name="resultado_leitura_padrao">Escaneie um QR Code para ver o conteúdo aqui.</string>
     <string name="btn_abrir_cardapio">Abrir cardápio</string>
 
     <!-- ===== Consulta de prato via QR (TheMealDB) + histórico (SQLite) ===== -->
+    <string name="prato_encontrado">PRATO ENCONTRADO</string>
     <string name="btn_historico">Pratos consultados</string>
+    <string name="desc_historico">Veja os pratos já escaneados</string>
     <string name="titulo_historico">Pratos consultados</string>
-    <string name="historico_vazio">Nenhum prato consultado ainda.\nEscaneie o QR Code de um prato (ex.: 52772).</string>
+    <string name="historico_vazio_titulo">Nenhum prato por aqui</string>
+    <string name="historico_vazio">Escaneie o QR Code de um prato (ex.: 52772) e ele aparecerá nesta lista.</string>
     <string name="consultando_prato">Consultando o prato %s…</string>
     <string name="consulta_salva">Prato salvo no histórico</string>
-    <string name="resultado_prato">%1$s\n%2$s</string>
     <string name="erro_prato_nao_encontrado">Prato %s não encontrado no TheMealDB</string>
     <string name="nao_informado">—</string>
-    <string name="detalhe_formatado">Registro nº %1$d\n\nPrato: %2$s\nCódigo TheMealDB: %3$s\nCategoria: %4$s\nOrigem: %5$s\n\nIngredientes:\n%6$s\n\nModo de preparo:\n%7$s\n\nConsultado em: %8$s\nConteúdo do QR Code: %9$s</string>
+
+    <!-- ===== Detalhes do prato ===== -->
+    <string name="detalhe_ingredientes">Ingredientes</string>
+    <string name="detalhe_preparo">Modo de preparo</string>
+    <string name="detalhe_consulta">Dados da consulta</string>
+    <string name="detalhe_registro">Registro</string>
+    <string name="detalhe_registro_valor">nº %d</string>
+    <string name="detalhe_codigo">Código TheMealDB</string>
+    <string name="detalhe_data">Consultado em</string>
+    <string name="detalhe_qr">Conteúdo do QR Code</string>
 
     <!-- ===== Mensagens ===== -->
     <string name="erro_generico">Ocorreu um erro. Tente novamente.</string>
@@ -42,7 +54,7 @@
     <string name="erro_link_vazio">Informe o link do cardápio</string>
     <string name="erro_link_invalido">Informe um link válido do cardápio</string>
     <string name="erro_sem_qr_para_compartilhar">Gere um QR Code antes de compartilhar</string>
-    <string name="erro_sem_link">Este QR Code não contém um link de cardápio</string>
+    <string name="erro_sem_link">Este QR Code não contém um link de cardápio.</string>
     <string name="erro_permissao_camera">É necessário conceder permissão de câmera</string>
     <string name="erro_abrir_link">Não foi possível abrir o cardápio</string>
     <string name="erro_sem_conexao">Sem conexão com a internet. Verifique a rede e tente novamente.</string>
